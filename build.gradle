@@ -98,8 +98,11 @@ publishing {
 	}
 }
 
-ext.distDir = "shpdiff.dist"
 task distributeBinary(type:Copy) {
+	if ( !project.hasProperty('distDir') ) {
+		ext.distDir = "${System.getProperty('user.dir')}/shpdiff.dist"
+	}
+	
 	dependsOn assemble
 	into "${distDir}"
 	from ("${projectDir}") {
@@ -107,7 +110,7 @@ task distributeBinary(type:Copy) {
 		include 'log4j.properties'
 		include '.gitignore'
 	}
-//	from "${buildDir}/libs/${archivesBaseName}-${version}-javadoc.jar"
+	from "${buildDir}/libs/${archivesBaseName}-${version}-javadoc.jar"
 }
 
 apply plugin: 'eclipse'

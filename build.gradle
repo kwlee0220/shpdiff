@@ -98,7 +98,7 @@ publishing {
 	}
 }
 
-ext.distDir = "${System.env.HOME}/tmp/shpdiff.dist"
+ext.distDir = "shpdiff.dist"
 task distributeBinary(type:Copy) {
 	dependsOn assemble
 	into "${distDir}"
@@ -107,7 +107,7 @@ task distributeBinary(type:Copy) {
 		include 'log4j.properties'
 		include '.gitignore'
 	}
-	from "${buildDir}/libs/${archivesBaseName}-${version}-javadoc.jar"
+//	from "${buildDir}/libs/${archivesBaseName}-${version}-javadoc.jar"
 }
 
 apply plugin: 'eclipse'

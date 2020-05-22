@@ -48,9 +48,6 @@ public class ShapefileCompare {
 		try {
 			m_oldSfUpdateInfos = loadOldShpFeatures();
 			m_newSfUpdateInfos = new UpdateInfo[m_newShpFile.getRecordCount()];
-//			m_mappings = findGeometryMapping();
-//			s_logger.info("mapped: old={}/{}, new={}/{}", m_mappings.size(), m_oldSfUpdateInfos.length,
-//														m_mappings.size(), m_newSfUpdateInfos.length);
 			m_mappings = findUpdatedPairs();
 		}
 		catch ( IOException e ) {
@@ -60,6 +57,10 @@ public class ShapefileCompare {
 	
 	public int getOldFeatureCount() {
 		return m_oldSfUpdateInfos.length;
+	}
+	
+	public int getNewFeatureCount() {
+		return m_newSfUpdateInfos.length;
 	}
 	
 	public IntFStream getDeletedFeatureSeqNo() {

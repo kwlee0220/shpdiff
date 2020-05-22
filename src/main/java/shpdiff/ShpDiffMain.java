@@ -94,8 +94,8 @@ public class ShpDiffMain implements Runnable {
 			int unchangedCount = shpCmp.getOldFeatureCount() - deletedCount - updatedCount;
 			
 			if ( m_verbose ) {
-				System.out.printf("elapsed=%s: base_shp_count=%d, new_shp_count=%d, unchanged=%d, "
-								+ "updateds=%d, inserteds=%d, deleteds=%d%n",
+				System.out.printf("elapsed=%s: base_shp_count=%d, new_shp_count=%d, "
+								+ "unchangeds=%d, updateds=%d, inserteds=%d, deleteds=%d%n",
 									watch.stopAndGetElpasedTimeString(),
 									shpCmp.getOldFeatureCount(), shpCmp.getNewFeatureCount(),
 									unchangedCount, updatedCount, insertedCount, deletedCount);

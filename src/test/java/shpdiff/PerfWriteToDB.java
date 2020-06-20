@@ -4,6 +4,8 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import utils.StopWatch;
 import utils.jdbc.JdbcProcessor;
 import utils.record.Record;
@@ -13,6 +15,7 @@ import utils.record.geotools.ShapefileRecordSetReader;
 import utils.record.jdbc.GeometryFormat;
 import utils.record.jdbc.JdbcRecordAdaptor;
 import utils.record.jdbc.JdbcRecordSetWriter;
+import utils.stream.FStream;
 
 /**
  * 
@@ -39,23 +42,30 @@ public class PerfWriteToDB {
 		List<Record> recordList = reader.read().toList();
 		JdbcProcessor jdbc = JdbcProcessor.create("postgresql", "129.254.82.42", 5432, "kwlee", "urc2004", "kwlee");
 		JdbcRecordAdaptor adaptor = JdbcRecordAdaptor.create(jdbc, schema, GeometryFormat.NATIVE);
-
 		store(shpFile, jdbc, adaptor, recordList);
-		StopWatch watch = StopWatch.start();
-		store(shpFile, jdbc, adaptor, recordList);
-		watch.stop();
 		
+		List<Long> elapseds = Lists.newArrayListWithExpectedSize(count);
+		for ( int i =0; i < count; ++i ) {
+			elapseds.add(store(shpFile, jdbc, adaptor, recordList));
+		}
 		adaptor.deleteTable(jdbc, "test_perf");
+		elapseds.sort((v1,v2) -> Long.compare(v1, v2));
+		elapseds.remove(count-1);
+		elapseds.remove(0);
 		
-		return watch.getElapsedInMillis();
+		return Math.round(FStream.from(elapseds).mapToLong(v -> (Long)v).average().get());
 	}
 	
-	private static final void store(File shpFile, JdbcProcessor jdbc, JdbcRecordAdaptor adaptor,
+	private static final long store(File shpFile, JdbcProcessor jdbc, JdbcRecordAdaptor adaptor,
 									List<Record> recList) throws Exception {
+		StopWatch watch = StopWatch.start();
 		try ( JdbcRecordSetWriter writer = new JdbcRecordSetWriter(jdbc, "test_perf", adaptor); ) {
 			writer.setForce(true);
-			long cnt = writer.write(RecordSet.from(recList));
-			System.out.println("count=" + cnt);
+			writer.write(RecordSet.from(recList));
 		}
+		watch.stop();
+		System.out.println("elapsed=" + watch.getElapsedInMillis());
+		
+		return watch.getElapsedInMillis();
 	}
 }

@@ -1,11 +1,11 @@
 package shpdiff;
 
-import static utils.geo.SerializableUtils.readEnvelope;
-import static utils.geo.SerializableUtils.readList;
-import static utils.geo.SerializableUtils.writeCollection;
-import static utils.geo.SerializableUtils.writeCoordinate;
-import static utils.geo.SerializableUtils.writeEmptyCollection;
-import static utils.geo.SerializableUtils.writeEnvelope;
+import static utils.record.SerializableUtils.readEnvelope;
+import static utils.record.SerializableUtils.readList;
+import static utils.record.SerializableUtils.writeCollection;
+import static utils.record.SerializableUtils.writeCoordinate;
+import static utils.record.SerializableUtils.writeEmptyCollection;
+import static utils.record.SerializableUtils.writeEnvelope;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

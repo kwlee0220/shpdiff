@@ -1,6 +1,6 @@
 package shpdiff;
 
-import static utils.geo.SerializableUtils.readList;
+import static utils.record.SerializableUtils.readList;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,8 +11,8 @@ import java.util.List;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
-import utils.geo.SerializableUtils;
 import utils.geo.quadtree.point.PointValue;
+import utils.record.SerializableUtils;
 import utils.stream.FStream;
 
 

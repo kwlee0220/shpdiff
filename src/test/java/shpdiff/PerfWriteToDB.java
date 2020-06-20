@@ -2,11 +2,13 @@ package shpdiff;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
 import utils.StopWatch;
+import utils.func.Try;
 import utils.jdbc.JdbcProcessor;
 import utils.record.Record;
 import utils.record.RecordSchema;
@@ -48,7 +50,7 @@ public class PerfWriteToDB {
 		for ( int i =0; i < count; ++i ) {
 			elapseds.add(store(shpFile, jdbc, adaptor, recordList));
 		}
-		adaptor.deleteTable(jdbc, "test_perf");
+		adaptor.deleteTable("test_perf");
 		elapseds.sort((v1,v2) -> Long.compare(v1, v2));
 		elapseds.remove(count-1);
 		elapseds.remove(0);
@@ -58,9 +60,11 @@ public class PerfWriteToDB {
 	
 	private static final long store(File shpFile, JdbcProcessor jdbc, JdbcRecordAdaptor adaptor,
 									List<Record> recList) throws Exception {
+		Try.run(() -> adaptor.deleteTable("test_perf"));
+		adaptor.createTable("test_perf", Collections.emptyList(), Collections.emptyList());
+		
 		StopWatch watch = StopWatch.start();
 		try ( JdbcRecordSetWriter writer = new JdbcRecordSetWriter(jdbc, "test_perf", adaptor); ) {
-			writer.setForce(true);
 			writer.write(RecordSet.from(recList));
 		}
 		watch.stop();

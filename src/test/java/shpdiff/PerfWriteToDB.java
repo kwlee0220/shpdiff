@@ -14,6 +14,7 @@ import utils.record.Record;
 import utils.record.RecordSchema;
 import utils.record.RecordSet;
 import utils.record.geotools.ShapefileRecordSetReader;
+import utils.record.geotools.SimpleFeatures;
 import utils.record.jdbc.GeometryFormat;
 import utils.record.jdbc.JdbcRecordAdaptor;
 import utils.record.jdbc.JdbcRecordSetWriter;
@@ -27,18 +28,18 @@ public class PerfWriteToDB {
 	public static final void main(String... args) throws Exception {
 		long elapsed;
 		
-		elapsed = runATest(Globals.SMALL, 10);
+		elapsed = runATest(Globals.SMALL, 3);
 		System.out.printf("SMALL: elapsed=%dms%n", elapsed);
 		
-		elapsed = runATest(Globals.MIDIUM, 10);
+		elapsed = runATest(Globals.MIDIUM, 3);
 		System.out.printf("MEDIUM: elapsed=%dms%n", elapsed);
 		
-		elapsed = runATest(Globals.LARGE, 10);
+		elapsed = runATest(Globals.LARGE, 3);
 		System.out.printf("LARGE: elapsed=%dms%n", elapsed);
 	}
 	
 	private static final long runATest(File shpFile, int count) throws Exception {
-		ShapefileRecordSetReader reader = ShapefileRecordSetReader.from(shpFile, Charset.forName("euc-kr"));
+		ShapefileRecordSetReader reader = SimpleFeatures.readShapefile(shpFile, Charset.forName("euc-kr"));
 		RecordSchema schema = reader.getRecordSchema();
 		
 		List<Record> recordList = reader.read().toList();

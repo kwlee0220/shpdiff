@@ -1,6 +1,7 @@
 package shpdiff;
 
-import static utils.record.SerializableUtils.readList;
+import static marmot.support.SerializableUtils.readList;
+import static marmot.support.SerializableUtils.writeCollection;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,7 +13,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
 import utils.geo.quadtree.point.PointValue;
-import utils.record.SerializableUtils;
 import utils.stream.FStream;
 
 
@@ -52,7 +52,7 @@ final class GeomInfoValueGroup implements PointValue, Serializable {
 	private void writeObject(ObjectOutputStream oos) throws IOException {
 		oos.defaultWriteObject();
 		
-		SerializableUtils.writeCollection(oos, m_infos, (os,v) -> os.writeObject(v));
+		writeCollection(oos, m_infos, (os,v) -> os.writeObject(v));
 	}
 	
 	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {

@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import utils.StopWatch;
 import utils.func.FOption;
 import utils.geo.Shapefile;
-import utils.record.geotools.SimpleFeatures;
+import utils.geo.SimpleFeatures;
 import utils.stream.FStream;
 
 /**
@@ -66,7 +66,7 @@ public class PerfWriteShapefile {
 	private static final long write(List<SimpleFeature> featureList, File outDir) throws Exception {
 		StopWatch watch = StopWatch.start();
 		SimpleFeatureCollection sfColl = SimpleFeatures.toFeatureCollection(featureList);
-		Shapefile.writeShapefile(outDir, sfColl, FOption.of(Charset.forName("euc-kr")),
+		Shapefile.writeShapefile(outDir, sfColl, Charset.forName("euc-kr"),
 								FOption.empty(), FOption.empty());
 		long elapsed = watch.stopInMillis();
 		System.out.printf("\telapsed=%s%n", elapsed);

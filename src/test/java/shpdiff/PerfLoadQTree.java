@@ -7,11 +7,11 @@ import java.util.List;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.google.common.collect.Lists;
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import utils.StopWatch;
+import utils.func.Tuple;
 import utils.geo.Shapefile;
 import utils.geo.quadtree.point.PointQuadTree;
 
@@ -21,19 +21,19 @@ import utils.geo.quadtree.point.PointQuadTree;
  */
 public class PerfLoadQTree {
 	public static final void main(String... args) throws Exception {
-		long elapsed;
+		Tuple<Long,Long> result;
 		
-		elapsed = runATest(Globals.SMALL, 10);
-		System.out.printf("SMALL: elapsed=%dms%n", elapsed);
+		result = runATest(Globals.SMALL, 10);
+		System.out.printf("SMALL: elapsed=%dms, memory=%d%n", result._1, result._2);
 		
-		elapsed = runATest(Globals.MIDIUM, 10);
-		System.out.printf("MEDIUM: elapsed=%dms%n", elapsed);
+		result = runATest(Globals.MIDIUM, 10);
+		System.out.printf("MEDIUM: elapsed=%dms, memory=%d%n", result._1, result._2);
 		
-		elapsed = runATest(Globals.LARGE, 10);
-		System.out.printf("LARGE: elapsed=%dms%n", elapsed);
+		result = runATest(Globals.LARGE, 10);
+		System.out.printf("LARGE: elapsed=%dms, memory=%d%n", result._1, result._2);
 	}
 	
-	private static final long runATest(File shpFile, int count) throws Exception {
+	private static final Tuple<Long,Long> runATest(File shpFile, int count) throws Exception {
 		Shapefile shp = Shapefile.of(shpFile);
 		Envelope mbr = shp.getTopBounds();
 		List<SimpleFeature> featureList = shp.streamFeatures().toList();
@@ -42,16 +42,21 @@ public class PerfLoadQTree {
 		buildQuadTree(mbr, featureList);
 		
 		List<Long> elapseds = Lists.newArrayListWithExpectedSize(count);
+		List<Long> memUsage = Lists.newArrayListWithExpectedSize(count);
 		for ( int i =0; i < count; ++i ) {
-			long elapsed = buildQuadTree(mbr, featureList);
-			elapseds.add(elapsed);
+			Tuple<Long,Long> result = buildQuadTree(mbr, featureList);
+			elapseds.add(result._1);
+			memUsage.add(result._2);
 		}
 		
-		return Globals.calcMeanElapsed(elapseds);
+		return Tuple.of(Globals.calcMean(elapseds), Globals.calcMean(memUsage));
 	}
 	
-	private static long buildQuadTree(Envelope mbr, List<SimpleFeature> features)
+	private static Tuple<Long,Long> buildQuadTree(Envelope mbr, List<SimpleFeature> features)
 		throws IOException {
+		System.gc();
+		long prevMem = Runtime.getRuntime().freeMemory();
+		
 		StopWatch watch = StopWatch.start();
 		GeomInfoQuadTree qtree = new GeomInfoQuadTree(mbr);
 		for ( int i =0; i < features.size(); ++i ) {
@@ -62,8 +67,14 @@ public class PerfLoadQTree {
 			qtree.insert(new GeomInfoValue(geomInfo));
 		}
 		watch.stop();
+		System.gc();
+		long afterMem = Runtime.getRuntime().freeMemory();
+		long memUsed = prevMem - afterMem;
 		
-		return watch.getElapsedInMillis();
+		System.out.println("depth=" + qtree.getDepth()
+							+ ", leaf-node count=" + qtree.streamLeafNodes().count());
+		
+		return Tuple.of(watch.getElapsedInMillis(), memUsed);
 	}
 	
 	private static class GeomInfoQuadTree extends PointQuadTree<GeomInfoValue, GeomInfoPartition> {

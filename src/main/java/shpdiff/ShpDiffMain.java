@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Properties;
 
@@ -120,8 +121,8 @@ public class ShpDiffMain implements Runnable {
 			if ( m_writeShp ) {
 				List<SimpleFeature> features = shpCmp.getDeletedFeatures().toList();
 				File deletedsDir = new File(m_outputPath, "deleteds_shp");
-				Shapefile.writeShapefile(deletedsDir, features, FOption.empty(), FOption.empty(),
-											FOption.empty());
+				Shapefile.writeShapefile(deletedsDir, features, Charset.defaultCharset(),
+										FOption.empty(), FOption.empty());
 			}
 		}
 		s_logger.info("deleteds: {}", deletedIdxes.length);
@@ -141,8 +142,8 @@ public class ShpDiffMain implements Runnable {
 			if ( m_writeShp ) {
 				List<SimpleFeature> features = shpCmp.getUpdatedFeatures().toList();
 				File updatedsDir = new File(m_outputPath, "updateds_shp");
-				Shapefile.writeShapefile(updatedsDir, features, FOption.empty(), FOption.empty(),
-											FOption.empty());
+				Shapefile.writeShapefile(updatedsDir, features, Charset.defaultCharset(),
+											FOption.empty(), FOption.empty());
 			}
 		}
 		s_logger.info("deleteds: {}", mappings.size());
@@ -161,8 +162,8 @@ public class ShpDiffMain implements Runnable {
 			if ( m_writeShp ) {
 				List<SimpleFeature> features = shpCmp.getInsertedFeatures().toList();
 				File insertedsDir = new File(m_outputPath, "inserteds_shp");
-				Shapefile.writeShapefile(insertedsDir, features, FOption.empty(), FOption.empty(),
-											FOption.empty());
+				Shapefile.writeShapefile(insertedsDir, features, Charset.defaultCharset(),
+										FOption.empty(), FOption.empty());
 			}
 		}
 		s_logger.info("inserteds: {}", insertedIdxes.length);

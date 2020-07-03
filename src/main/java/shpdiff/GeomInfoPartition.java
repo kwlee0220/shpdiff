@@ -1,11 +1,11 @@
 package shpdiff;
 
-import static utils.record.SerializableUtils.readEnvelope;
-import static utils.record.SerializableUtils.readList;
-import static utils.record.SerializableUtils.writeCollection;
-import static utils.record.SerializableUtils.writeCoordinate;
-import static utils.record.SerializableUtils.writeEmptyCollection;
-import static utils.record.SerializableUtils.writeEnvelope;
+import static marmot.support.SerializableUtils.readEnvelope;
+import static marmot.support.SerializableUtils.readList;
+import static marmot.support.SerializableUtils.writeCollection;
+import static marmot.support.SerializableUtils.writeCoordinate;
+import static marmot.support.SerializableUtils.writeEmptyCollection;
+import static marmot.support.SerializableUtils.writeEnvelope;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

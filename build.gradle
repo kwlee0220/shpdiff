@@ -36,7 +36,8 @@ repositories {
 }
 
 dependencies {
-	compile project(':utils')
+	compile project(":marmot.data")
+	compile project(":marmot.shp")
 	compile project(':utils.geo')
 }
 

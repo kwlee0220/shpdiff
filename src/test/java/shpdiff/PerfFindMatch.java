@@ -51,7 +51,7 @@ public class PerfFindMatch {
 			elapseds.add(elapsed);
 		}
 		
-		return Globals.calcMeanElapsed(elapseds);
+		return Globals.calcMean(elapseds);
 	}
 	
 	private static long findMatches(List<SimpleFeature> features, GeomInfoQuadTree qtree) {

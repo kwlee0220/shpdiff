@@ -186,14 +186,21 @@ public class ShapefileCompare {
 		UpdateInfo oldUpdateInfo = m_oldSfUpdateInfos[oldSeqno];
 		if ( oldUpdateInfo.isDeleted() ) {
 			SimpleFeature oldSf = m_oldSfUpdateInfos[oldSeqno].feature();
-			return compareAttributes(oldSf, sf).isAbsent();
+			
+			String v = (String)sf.getAttribute(2);
+//			if ( v.equals("##3") ) {
+//				System.out.println("" + oldSf.getAttribute(2) + ", " + sf.getAttribute(2)
+//									+ ", diff=" + findDifference(oldSf, sf));
+//			}
+			
+			return findDifference(oldSf, sf).isAbsent();
 		}
 		else {
 			return false;
 		}
 	}
 	
-	private FOption<String> compareAttributes(SimpleFeature oldSf, SimpleFeature newSf) {
+	private FOption<String> findDifference(SimpleFeature oldSf, SimpleFeature newSf) {
 		return FStream.from(oldSf.getFeatureType().getAttributeDescriptors())
 						.filter(desc -> !(desc.getType() instanceof GeometryType))
 						.map(AttributeDescriptor::getName)
@@ -218,7 +225,7 @@ public class ShapefileCompare {
 		return qtree;
 	}
 	
-	private static class GeomInfoQuadTree extends PointQuadTree<GeomInfoValue, GeomInfoPartition> {
+	public static class GeomInfoQuadTree extends PointQuadTree<GeomInfoValue, GeomInfoPartition> {
 		public GeomInfoQuadTree(Envelope rootEnvl) {
 			super(rootEnvl, bounds -> new GeomInfoPartition());
 		}
@@ -237,8 +244,7 @@ public class ShapefileCompare {
 		
 		@Override
 		public String toString() {
-			return String.format("match: old=%d, new=%d, diff=%.3f",
-									m_oldInfo.seqno(), m_newInfo.seqno(), m_diff);
+			return String.format("%d<->%d:%.3f", m_oldInfo.seqno(), m_newInfo.seqno(), m_diff);
 		}
 	}
 	

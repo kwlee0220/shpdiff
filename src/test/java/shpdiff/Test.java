@@ -10,12 +10,12 @@ import org.opengis.feature.simple.SimpleFeature;
 
 import com.google.common.collect.Lists;
 
+import marmot.Record;
+import record.shp.ShapefileDataSet;
+import record.shp.ShapefileWriter;
 import utils.StopWatch;
 import utils.func.FOption;
 import utils.geo.Shapefile;
-import utils.record.Record;
-import utils.record.RecordSet;
-import utils.record.geotools.SimpleFeatures;
 import utils.stream.FStream;
 
 /**
@@ -24,6 +24,7 @@ import utils.stream.FStream;
  */
 public class Test {
 	private static final int COUNT = 10;
+	private static final String SRID = "5186";
 	private static final File OUTPUT = new File("/home/kwlee/tmp/output");
 	private static final Charset EUC_KR = Charset.forName("euc-kr");
 	
@@ -74,7 +75,7 @@ public class Test {
 		List<SimpleFeature> featureList = shp.streamFeatures().toList();
 		SimpleFeatureCollection sfColl = new ListFeatureCollection(shp.getSimpleFeatureType(), featureList);
 		
-		shp.writeShapefile(OUTPUT, sfColl, FOption.of(EUC_KR), FOption.empty(), FOption.empty());
+		shp.writeShapefile(OUTPUT, sfColl, Charset.defaultCharset(), FOption.empty(), FOption.empty());
 		
 		long elapsed = watch.stopInMillis();
 		
@@ -84,11 +85,9 @@ public class Test {
 	private static final long runRecord() throws Exception {
 		StopWatch watch = StopWatch.start();
 		
-		List<Record> recList = SimpleFeatures.readShapefile(Globals.MIDIUM, Charset.defaultCharset())
-											.read()
-											.toList();
-		SimpleFeatures.writeShapefile(OUTPUT, "EPSG:4326")
-						.write(RecordSet.from(recList));
+		List<Record> recList = ShapefileDataSet.from(Globals.MIDIUM, EUC_KR).read().toList();
+		ShapefileWriter.into(OUTPUT, "EPSG:4326", EUC_KR)
+						.write(ShapefileDataSet.from(Globals.MIDIUM, EUC_KR).read());
 		
 		long elapsed = watch.stopInMillis();
 		

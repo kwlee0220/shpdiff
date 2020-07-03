@@ -56,7 +56,7 @@ public class PerfFindMatchNLoop {
 			elapseds.add(elapsed);
 		}
 		
-		return Globals.calcMeanElapsed(elapseds);
+		return Globals.calcMean(elapseds);
 	}
 	
 	private static long findMatches(List<SimpleFeature> features, List<GeomInfo> geomInfoList) {

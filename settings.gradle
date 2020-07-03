@@ -1,7 +1,13 @@
 rootProject.name = 'shpdiff'
 
 ext.common_dir = "../../common"
-['utils', 'utils.record', 'utils.geo'].each {
+['utils', 'utils.geo', 'utils.grpc'].each {
 	include ":$it"
 	project(":$it").projectDir = file("$common_dir/$it")
+}
+
+ext.marmot_dir = "../../marmot"
+['marmot.data', 'marmot.shp'].each {
+	include ":$it"
+	project(":$it").projectDir = file("${marmot_dir}/$it")
 }

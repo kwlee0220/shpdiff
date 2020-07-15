@@ -15,7 +15,7 @@ import marmot.RecordStream;
 import marmot.jdbc.GeometryFormat;
 import marmot.jdbc.JdbcDataSetWriter;
 import marmot.jdbc.JdbcRecordAdaptor;
-import record.shp.ShapefileDataSet;
+import record.shp.ShapefileReader;
 import utils.StopWatch;
 import utils.func.Try;
 import utils.geo.Shapefile;
@@ -50,7 +50,7 @@ public class PerfWriteToDB {
 	}
 	
 	private static final long runATestWithRatio(File shpFile, float ratio, int count) throws Exception {
-		ShapefileDataSet ds = ShapefileDataSet.from(shpFile, EUC_KR);
+		ShapefileReader ds = ShapefileReader.from(shpFile, EUC_KR);
 		RecordSchema schema = ds.getRecordSchema();
 		
 		List<Record> recordList = ds.read().fstream().sample(ratio).toList();

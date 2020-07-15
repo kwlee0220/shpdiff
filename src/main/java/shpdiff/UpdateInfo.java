@@ -23,6 +23,10 @@ public class UpdateInfo {
 		m_feature = feature;
 	}
 	
+	public byte status() {
+		return m_status;
+	}
+	
 	public static UpdateInfo unchanged() {
 		return new UpdateInfo(STATUS_UNCHANGED, null);
 	}
@@ -41,6 +45,10 @@ public class UpdateInfo {
 	
 	public static UpdateInfo inserted(SimpleFeature feature) {
 		return new UpdateInfo(STATUS_INSERTED, feature);
+	}
+	
+	public static UpdateInfo updated() {
+		return new UpdateInfo(STATUS_UPDATED, null);
 	}
 	
 	public static UpdateInfo updated(SimpleFeature feature) {

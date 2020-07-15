@@ -44,11 +44,13 @@ public class TestCorrectness {
 	public static final void main(String... args) throws Exception {
 		List<SimpleFeature> features = createTestShapefile(Globals.SMALL, OUTPUT_OLD);
 		for ( int i =0; i < TEST_COUNT; ++i ) {
-			runATest(i, features);
+			if ( !runATest(i, features) ) {
+				break;
+			}
 		}
 	}
 	
-	private static void runATest(int idx, List<SimpleFeature> features) throws IOException {
+	private static boolean runATest(int idx, List<SimpleFeature> features) throws IOException {
 		List<SimpleFeature> remains = features;
 		List<SimpleFeature> updateds = Lists.newArrayList();
 		List<SimpleFeature> inserteds = Lists.newArrayList();
@@ -74,8 +76,18 @@ public class TestCorrectness {
 		boolean matchDeleteds = Arrays.equals(answerDeletedIdxes, foundDeletedIdxes);
 		boolean matchUpdateds = Arrays.equals(answerUpdatedIdxes, foundUpdatedIdxes);
 		boolean matchInserteds = Arrays.equals(answerInsertedIndexes, foundInsertedIdxes);
-		System.out.printf("[%3d]: deleteds=%s, updateds=%s, inserteds=%s%n",
-							idx, matchDeleteds, matchUpdateds, matchInserteds);
+		
+		if ( matchDeleteds && matchUpdateds && matchInserteds ) {
+			System.out.printf("[%3d]: deleteds=%s, updateds=%s, inserteds=%s%n",
+								idx, matchDeleteds, matchUpdateds, matchInserteds);
+			return true;
+		}
+		else {
+			System.err.printf("[%3d]: deleteds=%s, updateds=%s, inserteds=%s%n",
+								idx, matchDeleteds, matchUpdateds, matchInserteds);
+			return false;
+		}
+		
 //		System.out.printf("%d,%d,%d,%d,%d,%d%n",
 //							answerDeletedIdxes.length, answerUpdatedIdxes.length, answerInsertedIndexes.length,
 //							foundDeletedIdxes.length, foundUpdatedIdxes.length, foundInsertedIdxes.length);
@@ -95,7 +107,8 @@ public class TestCorrectness {
 		GeomInfoQuadTree qtree = new GeomInfoQuadTree(shp.getTopBounds());
 		List<SimpleFeature> features
 						= shp.streamGeometries()
-							.map(geom -> new GeomInfo(geom, 0))
+							.zipWithIndex()
+							.map(t -> new GeomInfo(t._1, t._2))
 							.filter(info -> {
 								Envelope envl = new Envelope(info.center());
 								envl.expandBy(0.01);

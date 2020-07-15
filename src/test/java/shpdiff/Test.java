@@ -11,7 +11,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import com.google.common.collect.Lists;
 
 import marmot.Record;
-import record.shp.ShapefileDataSet;
+import record.shp.ShapefileReader;
 import record.shp.ShapefileWriter;
 import utils.StopWatch;
 import utils.func.FOption;
@@ -85,9 +85,9 @@ public class Test {
 	private static final long runRecord() throws Exception {
 		StopWatch watch = StopWatch.start();
 		
-		List<Record> recList = ShapefileDataSet.from(Globals.MIDIUM, EUC_KR).read().toList();
+		List<Record> recList = ShapefileReader.from(Globals.MIDIUM, EUC_KR).read().toList();
 		ShapefileWriter.into(OUTPUT, "EPSG:4326", EUC_KR)
-						.write(ShapefileDataSet.from(Globals.MIDIUM, EUC_KR).read());
+						.write(ShapefileReader.from(Globals.MIDIUM, EUC_KR).read());
 		
 		long elapsed = watch.stopInMillis();
 		

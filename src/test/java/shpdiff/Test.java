@@ -11,8 +11,8 @@ import org.opengis.feature.simple.SimpleFeature;
 import com.google.common.collect.Lists;
 
 import marmot.Record;
-import record.shp.ShapefileReader;
-import record.shp.ShapefileWriter;
+import marmot.shp.ShapefileReader;
+import marmot.shp.ShapefileWriter;
 import utils.StopWatch;
 import utils.func.FOption;
 import utils.geo.Shapefile;

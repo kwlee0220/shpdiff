@@ -17,8 +17,8 @@ import utils.func.FOption;
 import utils.func.Tuple;
 import utils.func.Tuple3;
 import utils.func.Tuple4;
-import utils.geo.GeometryUtils;
 import utils.geo.Shapefile;
+import utils.geo.util.GeometryUtils;
 import utils.stream.FStream;
 
 /**

@@ -15,7 +15,7 @@ import marmot.RecordStream;
 import marmot.jdbc.GeometryFormat;
 import marmot.jdbc.JdbcDataSetWriter;
 import marmot.jdbc.JdbcRecordAdaptor;
-import record.shp.ShapefileReader;
+import marmot.shp.ShapefileReader;
 import utils.StopWatch;
 import utils.func.Try;
 import utils.geo.Shapefile;

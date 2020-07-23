@@ -146,7 +146,7 @@ public class ShpDiffMain implements Runnable {
 											FOption.empty(), FOption.empty());
 			}
 		}
-		s_logger.info("deleteds: {}", mappings.size());
+		s_logger.info("updateds: {}", mappings.size());
 		
 		return mappings.size();
 	}

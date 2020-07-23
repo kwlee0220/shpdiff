@@ -151,12 +151,15 @@ public class ShapefileCompare {
 			int oldSeqno = match.m_oldInfo.seqno();
 			
 			// 검색된 이전 레코드의 속성 값들과 새 shp 레코드의 속성 값을 비교한다.
-			if ( matchAttributes(seqno, sf, match) ) {
+			String diffCol = findDifferentColumn(seqno, sf, match);
+			if ( diffCol == null ) {
 				// 속성 값까지 정확히 매칭된 경우
 				m_newSfUpdateInfos[seqno] = UpdateInfo.unchanged();
 				m_oldSfUpdateInfos[oldSeqno] = UpdateInfo.unchanged();
 			}
 			else {
+				s_logger.info("found difference: {} <-> {}, diff_col={}", oldSeqno, seqno, diffCol);
+				
 				// 속성 값들 중 일부가 다른 경우
 				m_newSfUpdateInfos[seqno] = UpdateInfo.updated(sf);
 				
@@ -166,9 +169,12 @@ public class ShapefileCompare {
 			return FOption.of(Tuple.of(oldSeqno, seqno));
 		}
 		else if ( geomMatches.size() > 1 ) {	// 검색된 이전 shp 레코드가 2개 이상인 경우
+			if ( s_logger.isDebugEnabled() ) {
+				s_logger.debug("multiple geometry matches: {}", geomMatches);
+			}
 			return FStream.from(geomMatches)
 						// 검색된 이전 shp 레코드들 중 속성 값이 동일한 레코드만 뽑는다.
-						.filter(geomMatch -> matchAttributes(seqno, sf, geomMatch))
+						.filter(geomMatch -> findDifferentColumn(seqno, sf, geomMatch) != null)
 						.map(m -> m.m_oldInfo)
 						// '삭제'로 태깅된 이전 shp 레코드만 뽑는다.
 						.filter(ginfo -> m_oldSfUpdateInfos[ginfo.seqno()].isDeleted())
@@ -180,6 +186,7 @@ public class ShapefileCompare {
 							int oldSeqno = oldInfo.seqno();
 							m_newSfUpdateInfos[seqno] = UpdateInfo.unchanged();
 							m_oldSfUpdateInfos[oldSeqno] = UpdateInfo.unchanged();
+							
 							return Tuple.of(oldSeqno, seqno);
 						})
 						.orElse(() -> {
@@ -189,8 +196,10 @@ public class ShapefileCompare {
 							int oldSeqno = geomMatches.get(0).m_oldInfo.seqno();
 							SimpleFeature oldSf = m_oldSfUpdateInfos[oldSeqno].feature();
 							m_oldSfUpdateInfos[oldSeqno] = UpdateInfo.updated(oldSf);
-							
 							m_newSfUpdateInfos[seqno] = UpdateInfo.updated(sf);
+							
+							s_logger.info("multiple geometry match => updated: {} = {}", oldSeqno, seqno);
+							
 							return FOption.of(Tuple.of(oldSeqno, seqno));
 						});
 		}
@@ -199,16 +208,16 @@ public class ShapefileCompare {
 			return FOption.empty();
 		}
 	}
-	
-	private boolean matchAttributes(int seqno, SimpleFeature sf, GeomMatch geomMatch) {
+
+	private String findDifferentColumn(int seqno, SimpleFeature sf, GeomMatch geomMatch) {
 		int oldSeqno = geomMatch.m_oldInfo.seqno();
 		UpdateInfo oldUpdateInfo = m_oldSfUpdateInfos[oldSeqno];
 		if ( oldUpdateInfo.isDeleted() ) {
 			SimpleFeature oldSf = m_oldSfUpdateInfos[oldSeqno].feature();
-			return findDifference(oldSf, sf).isAbsent();
+			return findDifference(oldSf, sf).getOrNull();
 		}
 		else {
-			return false;
+			return null;
 		}
 	}
 	
@@ -250,7 +259,7 @@ public class ShapefileCompare {
 		GeomMatch(GeomInfo oldInfo, GeomInfo newInfo) {
 			m_oldInfo = oldInfo;
 			m_newInfo = newInfo;
-			m_diff = m_oldInfo.geometry().symDifference(m_newInfo.geometry()).getArea();
+			m_diff = m_oldInfo.geometry().symDifference(m_newInfo.geometry()).getLength();
 		}
 		
 		@Override
@@ -265,7 +274,7 @@ public class ShapefileCompare {
 		
 		return qtree.query(key)
 					.map(found -> new GeomMatch(found.getGeomInfo(), info))
-					.filter(m -> Double.compare(m.m_diff, 1) <= 0)
+					.filter(m -> Double.compare(m.m_diff, 0.1) <= 0)
 					.sort((m1,m2) -> Double.compare(m1.m_diff, m2.m_diff));
 	}
 }

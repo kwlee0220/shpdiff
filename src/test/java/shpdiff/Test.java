@@ -85,8 +85,9 @@ public class Test {
 	private static final long runRecord() throws Exception {
 		StopWatch watch = StopWatch.start();
 		
-		List<Record> recList = ShapefileReader.from(Globals.MIDIUM, EUC_KR).read().toList();
-		ShapefileWriter.into(OUTPUT, "EPSG:4326", EUC_KR)
+		ShapefileReader reader = ShapefileReader.from(Globals.MIDIUM, EUC_KR);
+		List<Record> recList = reader.read().toList();
+		ShapefileWriter.get(reader.getRecordSchema(), OUTPUT, "EPSG:4326", EUC_KR)
 						.write(ShapefileReader.from(Globals.MIDIUM, EUC_KR).read());
 		
 		long elapsed = watch.stopInMillis();

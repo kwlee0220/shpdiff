@@ -77,7 +77,7 @@ public class PerfWriteToDB {
 		adaptor.createTable("test_perf", Collections.emptyList(), Collections.emptyList());
 		
 		StopWatch watch = StopWatch.start();
-		JdbcDataSetWriter writer = new JdbcDataSetWriter(adaptor, "test_perf");
+		JdbcDataSetWriter writer = new JdbcDataSetWriter(adaptor, "test_perf", recList.get(0).getRecordSchema());
 		writer.write(RecordStream.from(recList));
 		watch.stop();
 //		System.out.println("elapsed=" + watch.getElapsedInMillis());

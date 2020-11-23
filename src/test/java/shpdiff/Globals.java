@@ -22,6 +22,9 @@ public class Globals {
 //	public static final File LARGE = new File("c:/temp/shpdiff_perf_test/road_large/link_info.shp");
 	public static final File[] DATA_FILES = new File[] {SMALL, MIDIUM, LARGE};
 	
+
+	public static final File WATER_WORKS = new File("/home/kwlee/tmp/shpdiff_perf_test/201912/상수관로/WTL_PIPE_LM.shp");
+	
 	public static long calcMean(List<Long> elapsedList) {
 		elapsedList.sort((v1,v2) -> Long.compare(v1, v2));
 		elapsedList.remove(elapsedList.size()-1);

@@ -34,9 +34,10 @@ public class PerfWriteToDB {
 	public static final void main(String... args) throws Exception {
 		long elapsed;
 		
-		runATest(Globals.SMALL, "SMALL");
-		runATest(Globals.MIDIUM, "MIDIUM");
-		runATest(Globals.LARGE, "LARGE");
+//		runATest(Globals.SMALL, "SMALL");
+//		runATest(Globals.MIDIUM, "MIDIUM");
+//		runATest(Globals.LARGE, "LARGE");
+		runATest(Globals.WATER_WORKS, "WATER_WORKS");
 	}
 	
 	private static final void runATest(File shpFile, String symbol) throws Exception {
